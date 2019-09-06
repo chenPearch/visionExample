@@ -12,13 +12,13 @@ def nothing(x):
 
 
 def main():
-    debug = True;
-    # cap = cv2.VideoCapture('http://root:root@10.45.86.12/mjpg/video.mjpg')
-    cap = cv2.VideoCapture(1)
+    debug = True
+    # cap = cv2.VideoCapture('http://root:root@10.45.86.12/mjpg/video.mjpg') #Axis cam IP
+    cap = cv2.VideoCapture(1) #using an external USB camera
 
-    winName = "slider"
+    winName = "slider" #string for windows names
 
-    #the first thing that shoulden't bother you
+    #the first thing that shoulden't bother you #wtf is the first thing
     path = "HSVdata.txt"
     t = helperClass(winName,False,path)
 
@@ -32,18 +32,17 @@ def main():
     cv2.createTrackbar('S max', winName, 255, 255, nothing)
     cv2.createTrackbar('V max', winName, 255, 255, nothing)
 
-    #the second thing that shouldn't bother you
+    #the second thing that shouldn't bother you #wtf is the second thing
     # t.createTrackBars(winName)
 
-
-
+    #the Actual loop. condition is True to always run
     while (True):
-        _, img = cap.read()
+        _, img = cap.read() #sets img to what the camera sees every time the loop runs
 
         #this line adds a blur effect to the img (it helps with the HSV calibration)
-        frame1 = cv2.GaussianBlur(img,(5,5),cv2.BORDER_DEFAULT)
+        frame1 = cv2.GaussianBlur(img,(5,5),cv2.BORDER_DEFAULT) #not absolutely necessary
 
-        #this sesction down scales the img by 60%
+        #this sesction down scales the img by 60%, not absolutely necessary
         scale_percent = 60  # percent of original size
         width = int(img.shape[1] * scale_percent / 100)
         height = int(img.shape[0] * scale_percent / 100)
@@ -83,13 +82,15 @@ def main():
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
 
-        fillteredCont = []
+        fillteredCont = [] #a new list to store the filtered contours.
+        #filtering the contours
         for con in contours:
             if (cv2.contourArea(con) > 900):
                 fillteredCont.append(con)
 
         # cv2.drawContours(frame, fillteredCont, -1, (0, 0, 255), 3)
-
+       
+    
         for cnt in fillteredCont:
             #sorrunds the counturs with a bounding rect and returns the hight width and x,y values of one of the points
             x, y,w,h = cv2.boundingRect(cnt)
