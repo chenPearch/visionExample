@@ -2,40 +2,23 @@ import cv2
 import numpy as np
 import math
 from networktables import NetworkTables
-from opencvBasic import helperClass
+from opencvBasic import Sliders
 
 fov = 27.7665349671
 tan_frame = math.tan(math.radians(fov))
 tm = 0.325
-def nothing(x):
-    pass
 
 
 def main():
     debug = True;
-    # cap = cv2.VideoCapture('http://root:root@10.45.86.12/mjpg/video.mjpg')
-    cap = cv2.VideoCapture(1)
+    # cap = cv2.VideoCapture('http://root:root@10.45.86.12/mjpg/video.mjpg') # use this line if you want to fetch video from the web.
+    cap = cv2.VideoCapture(0)
 
     winName = "slider"
 
     #the first thing that shoulden't bother you
-    path = "HSVdata.txt"
-    t = helperClass(winName,False,path)
-
-    # creates the sliders for the HSV vaules
-    slidersWin = np.zeros((1, 400, 3), np.uint8)
-    cv2.namedWindow(winName)
-    cv2.createTrackbar('h min', winName, 0, 255, nothing)
-    cv2.createTrackbar('s min', winName, 0, 255, nothing)
-    cv2.createTrackbar('v min', winName, 0, 255, nothing)
-    cv2.createTrackbar('H max', winName, 255, 255, nothing)
-    cv2.createTrackbar('S max', winName, 255, 255, nothing)
-    cv2.createTrackbar('V max', winName, 255, 255, nothing)
-
-    #the second thing that shouldn't bother you
-    # t.createTrackBars(winName)
-
-
+    path = "HSVdata.json"
+    t = Sliders(winName,False,path)
 
     while (True):
         _, img = cap.read()
@@ -58,19 +41,10 @@ def main():
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV_FULL)
 
         #the thrid thing that really shouldent bouther you
-        # if(debug):
-        #     t.writeHSVvals(winName)
-        # upper, lower = t.getHSV(winName)
-
-        #this if statment is for separating debug mode from regular mode
         if(debug):
-            #gets the lower and upper HSV  values from the track bars created above
-            lower = np.array([cv2.getTrackbarPos('h min',winName),
-            cv2.getTrackbarPos('s min',winName),
-            cv2.getTrackbarPos('v min',winName)])
-            upper = np.array([cv2.getTrackbarPos("H max", winName),
-            cv2.getTrackbarPos("S max", winName),
-            cv2.getTrackbarPos("V max", winName)])
+            t.writeHSVvals()
+            upper, lower = t.getHSV()
+
         else:
             #sets the hsv values premnently
             lower = np.array([0,155,25])
@@ -82,13 +56,13 @@ def main():
 
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
-
+        # filters the countures by area
         fillteredCont = []
         for con in contours:
             if (cv2.contourArea(con) > 900):
                 fillteredCont.append(con)
 
-        # cv2.drawContours(frame, fillteredCont, -1, (0, 0, 255), 3)
+        cv2.drawContours(frame, fillteredCont, -1, (0, 0, 255), 3)
 
         for cnt in fillteredCont:
             #sorrunds the counturs with a bounding rect and returns the hight width and x,y values of one of the points
@@ -104,8 +78,6 @@ def main():
             d = (0.325 * midFrame) / (2*w * tan_frame)
             Dfinal = d/math.cos(tan_alfa)
             print("alfa: " + str(alfa))
-            # print("d   : " + str(d))
-            # print("Dfinal: " + str(Dfinal))
 
 
 
@@ -116,5 +88,8 @@ def main():
         k = cv2.waitKey(1)
         if (k == 27):
             break
+    
     cv2.destroyAllWindows()
-main()
+
+if __name__ == "__main__": # this is how you write the main function in python.
+    main()
