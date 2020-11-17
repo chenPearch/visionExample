@@ -1,3 +1,4 @@
 # visionExample
-היי שלום חדשים מה המצב הנה קוד לדוגמא כזה תהנו.
-קוד זה מדגים את הפעילות הבסיסית לזיהוי אובייקטים על פי צבע
+simple example project that recognises objects based on color.
+this project was meant for new rookies in the vision processing subteam.
+
