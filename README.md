@@ -20,5 +20,3 @@ cd VisionExample
 
 python VisionExample.py
 ```
-
-

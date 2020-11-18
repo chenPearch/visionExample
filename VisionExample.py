@@ -3,6 +3,7 @@ import numpy as np
 import math
 from networktables import NetworkTables
 from opencvBasic import Sliders
+from pathlib import Path
 
 fov = 27.7665349671
 tan_frame = math.tan(math.radians(fov))
@@ -14,11 +15,11 @@ def main():
     # cap = cv2.VideoCapture('http://root:root@10.45.86.12/mjpg/video.mjpg') # use this line if you want to fetch video from the web.
     cap = cv2.VideoCapture(0)
 
-    winName = "slider"
+    winName = "sliders"
 
     #the first thing that shoulden't bother you
-    path = "HSVdata.json"
-    t = Sliders(winName,False,path)
+    path = Path.joinpath(Path.cwd,"HSVdata.json")
+    t = Sliders(winName = winName,isPi=False,path= path)
 
     while (True):
         _, img = cap.read()

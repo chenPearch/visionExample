@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import math
 import json
+from pathlib import Path
 class Sliders:
     '''
     this 'helperClass' is a simple class disgnd to
@@ -9,7 +10,7 @@ class Sliders:
 
     this class also handles the saving of data to a json file
     '''
-    def __init__(self,winName,isPi,path):
+    def __init__(self,winName = "sliders",isPi = False,path = Path.joinpath(Path.cwd,"HSVdata.json") ):
         self.winName = winName
         self.isPi = isPi
         self.path = path
@@ -20,15 +21,17 @@ class Sliders:
                 json.dump({"H min": 0, "H max": 0, "S min": 0, "S max": 0, "V min": 0, "V max": 0},outFile)
             self.vals = json.load(open(self.path)) # and then open the file
         
-        self.createTrackBars()
+        if not self.isPi:
+            self.createTrackBars()
         
     def writeHSVvals(self):
         '''
         saves the trackbar data in the file
         '''
         #puts the json thingy in to a txt file
-        with open(self.path,"w") as outFile:
-            json.dump(self.vals,outFile)
+        if not self.isPi:
+            with open(self.path,"w") as outFile:
+                json.dump(self.vals,outFile)
 
     # returns the hsv values to the user
     def getHSV(self):
